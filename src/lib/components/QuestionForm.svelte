@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Textarea } from "$lib/components/ui/textarea";
-  import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "$lib/components/ui/card";
-  
   export let onSubmit: (question: string) => Promise<void>;
   export let isLoading = false;
   
@@ -26,32 +22,32 @@
   }
 </script>
 
-<Card class="w-full">
-  <CardHeader>
-    <CardTitle>質問を入力してください</CardTitle>
-  </CardHeader>
-  <CardContent>
+<div class="card w-full">
+  <div class="card-header">
+    <h2 class="card-title">質問を入力してください</h2>
+  </div>
+  <div class="card-content">
     <form on:submit|preventDefault={handleSubmit}>
-      <Textarea
+      <textarea
         bind:value={question}
         placeholder="GitHubリポジトリに関する質問を入力してください..."
         rows={4}
         disabled={isLoading}
-        class="mb-4"
-      />
+        class="textarea mb-4"
+      ></textarea>
       
       {#if error}
-        <p class="text-red-500 text-sm mb-4">{error}</p>
+        <p class="error-text mb-4">{error}</p>
       {/if}
       
-      <Button type="submit" disabled={isLoading} class="w-full">
+      <button type="submit" disabled={isLoading} class="btn btn-primary w-full">
         {#if isLoading}
-          <span class="mr-2">処理中...</span>
-          <div class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span>処理中...</span>
+          <span class="spinner"></span>
         {:else}
           質問する
         {/if}
-      </Button>
+      </button>
     </form>
-  </CardContent>
-</Card>
+  </div>
+</div>

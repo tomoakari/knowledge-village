@@ -34,10 +34,10 @@
   }
 </script>
 
-<div class="container mx-auto px-4 py-8 max-w-4xl">
+<div class="container px-4 py-8">
   <header class="mb-8 text-center">
     <h1 class="text-3xl font-bold mb-2">Knowledge Village</h1>
-    <p class="text-stone-600 dark:text-stone-400">
+    <p style="opacity: 0.7;">
       GitHubリポジトリの知識を活用した質問応答システム
     </p>
   </header>
@@ -47,19 +47,7 @@
     <AnswerDisplay {answer} {isLoading} />
   </main>
   
-  <footer class="mt-12 text-center text-stone-500 text-sm">
+  <footer class="mt-12 text-center text-sm" style="opacity: 0.7;">
     <p>© 2025 Knowledge Village - Powered by SvelteKit, Gemma3, and GitHub</p>
   </footer>
 </div>
-
-<style>
-  :global(body) {
-    background-color: #f8f8f8;
-    color: #333;
-  }
-  
-  :global(.dark) {
-    background-color: #1c1c1c;
-    color: #f0f0f0;
-  }
-</style>
