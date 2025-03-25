@@ -1,0 +1,30 @@
+steps:
+  # ビルドステップ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/knowledge-village:$COMMIT_SHA', '.']
+
+  # イメージをContainer Registryにプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/knowledge-village:$COMMIT_SHA']
+
+  # Cloud Runにデプロイ
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'knowledge-village'
+      - '--image=gcr.io/$PROJECT_ID/knowledge-village:$COMMIT_SHA'
+      - '--region=asia-northeast1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--set-secrets=GOOGLE_CLOUD_PROJECT=GOOGLE_CLOUD_PROJECT:latest'
+      - '--set-secrets=github-token=github-token:latest'
+      - '--set-secrets=gemma3-api-key=gemma3-api-key:latest'
+
+# イメージをContainer Registryに保存
+images:
+  - 'gcr.io/$PROJECT_ID/knowledge-village:$COMMIT_SHA'
+
+# タイムアウト設定（デフォルトは10分）
+timeout: '1200s'

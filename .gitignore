@@ -1,0 +1,32 @@
+# ビルド出力
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+
+# 依存関係
+/node_modules
+
+# ログ
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# エディタ設定
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+
+# その他
+.vercel
+.output
+vite.config.js.timestamp-*
