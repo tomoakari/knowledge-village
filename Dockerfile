@@ -23,7 +23,6 @@ RUN npm ci --omit=dev
 
 # ビルド済みのアプリケーションをコピー
 COPY --from=build /app/build ./build
-COPY --from=build /app/node_modules/.pnpm @sveltejs+kit@2.16.0_svelte@5.0.0_vite@6.0.0/node_modules/@sveltejs/kit/assets/server/shims.js ./build/
 
 # 実行ユーザーを設定
 USER node
