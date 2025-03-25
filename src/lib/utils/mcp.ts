@@ -1,7 +1,17 @@
-/**
- * MCPユーティリティ関数
- * MCPサーバーとの通信を行うためのユーティリティ関数を提供
- */
+import { Octokit } from 'octokit';
+import { getGithubToken } from '$lib/utils/secrets';
+
+// Octokitインスタンス
+let octokit: Octokit | null = null;
+
+// Octokitの初期化
+async function getOctokit(): Promise<Octokit> {
+  if (!octokit) {
+    const token = await getGithubToken();
+    octokit = new Octokit({ auth: token });
+  }
+  return octokit;
+}
 
 /**
  * GitHubリポジトリ内のコードを検索する
@@ -12,18 +22,10 @@
  */
 export async function searchGitHubRepo(owner: string, repo: string, query: string): Promise<any[]> {
   try {
-    // @ts-ignore - グローバル関数として利用可能
-    const result = await use_mcp_tool({
-      server_name: 'github',
-      tool_name: 'search_github_repo',
-      arguments: {
-        owner,
-        repo,
-        query
-      }
-    });
-    
-    return JSON.parse(result);
+    const client = await getOctokit();
+    const searchQuery = `${query} repo:${owner}/${repo}`;
+    const response = await client.rest.search.code({ q: searchQuery });
+    return response.data.items;
   } catch (error) {
     console.error('GitHub検索エラー:', error);
     return [];
@@ -39,18 +41,21 @@ export async function searchGitHubRepo(owner: string, repo: string, query: strin
  */
 export async function getGitHubFileContent(owner: string, repo: string, path: string): Promise<string> {
   try {
-    // @ts-ignore - グローバル関数として利用可能
-    const result = await use_mcp_tool({
-      server_name: 'github',
-      tool_name: 'get_file_content',
-      arguments: {
-        owner,
-        repo,
-        path
-      }
+    const client = await getOctokit();
+    const response = await client.rest.repos.getContent({
+      owner,
+      repo,
+      path
     });
     
-    return result;
+    if (Array.isArray(response.data)) {
+      throw new Error(`Path ${path} is a directory, not a file`);
+    }
+    
+    // @ts-ignore - content プロパティは存在するが型定義が不完全
+    const content = response.data.content || '';
+    // Base64デコード
+    return Buffer.from(content, 'base64').toString('utf-8');
   } catch (error) {
     console.error(`ファイル ${path} の取得エラー:`, error);
     throw error;
@@ -65,16 +70,6 @@ export async function getGitHubFileContent(owner: string, repo: string, path: st
  * @returns ファイル内容
  */
 export async function getGitHubFileResource(owner: string, repo: string, path: string): Promise<string> {
-  try {
-    // @ts-ignore - グローバル関数として利用可能
-    const result = await access_mcp_resource({
-      server_name: 'github',
-      uri: `github://${owner}/${repo}/file/${path}`
-    });
-    
-    return result;
-  } catch (error) {
-    console.error(`ファイル ${path} のリソース取得エラー:`, error);
-    throw error;
-  }
+  // リソースとして取得する代わりに、直接ファイル内容を取得
+  return getGitHubFileContent(owner, repo, path);
 }
