@@ -131,5 +131,5 @@ export class GitHubService {
  * @returns GitHubServiceインスタンス
  */
 export function createDefaultGitHubService(): GitHubService {
-  return new GitHubService('my-org', 'my-qa-repo');
+  return new GitHubService('tomoakari', 'diiekkusu');
 }
